@@ -1,0 +1,70 @@
+[ {
+  "defaultTab" : "output",
+  "description" : "",
+  "executionEnabled" : true,
+  "id" : "66a91bed-e885-49af-ad0c-e1d93d84ca0b",
+  "loglevel" : "INFO",
+  "multipleExecutions" : true,
+  "name" : "[DEV ASB] Check all hosts",
+  "nodeFilterEditable" : true,
+  "nodefilters" : {
+    "dispatch" : {
+      "excludePrecedence" : true,
+      "keepgoing" : true,
+      "rankOrder" : "ascending",
+      "successOnEmptyNodeFilter" : false,
+      "threadcount" : "10"
+    },
+    "filter" : "name: ansible_server "
+  },
+  "nodesSelectedByDefault" : true,
+  "notification" : {
+    "onfailure" : {
+      "email" : {
+        "attachLog" : true,
+        "attachLogInline" : true,
+        "recipients" : "dimitri.cognet@msc.com"
+      }
+    },
+    "onsuccess" : {
+      "email" : {
+        "attachLog" : true,
+        "attachLogInline" : true,
+        "recipients" : "dimitri.cognet@msc.com"
+      }
+    }
+  },
+  "notifyAvgDurationThreshold" : null,
+  "plugins" : {
+    "ExecutionLifecycle" : { }
+  },
+  "retry" : {
+    "delay" : "1m",
+    "retry" : "0"
+  },
+  "runnerSelector" : {
+    "runnerFilterMode" : "LOCAL",
+    "runnerFilterType" : "LOCAL_RUNNER"
+  },
+  "scheduleEnabled" : true,
+  "schedules" : [ ],
+  "sequence" : {
+    "commands" : [ {
+      "configuration" : {
+        "ansible-base-dir-path" : "/etc/ansible",
+        "ansible-become" : "false",
+        "ansible-playbook-inline" : "- hosts: '${node.name}'\n  gather_facts: yes\n  \n  vars:\n    ansible_winrm_reconnection_backoff_factor: 2.0\n    ansible_winrm_reconnection_retries: 6\n    linux_os_name: \"{{ ansible_facts.distribution | default(omit) }} {{ ansible_facts.distribution_version | default(omit) }} ({{ ansible_facts.distribution_release | default(omit) }})\"\n    windows_os_name: \"{{ ansible_facts.os_name | default(omit) }}\"\n    os_name: \"{{ (ansible_facts.system == 'Linux') | ternary(linux_os_name, windows_os_name) }}\"\n    windows_ip_addresses: \"{{ ansible_facts.ip_addresses | default(omit) }}\"\n    linux_ip_addresses: \"{{ ansible_facts.all_ipv4_addresses | default(omit) }}\"\n    ip_addresses: \"{{ (ansible_facts.system == 'Linux') | ternary(linux_ip_addresses, windows_ip_addresses) }}\"\n\n  tasks:\n  \n  - debug:\n      msg:\n      - \"All facts: {{ansible_facts.system}}\"\n      - \"System: {{ansible_facts.system}}\"\n      - \"OS Family: {{ansible_facts.os_family}}\"\n      - \"OS Name: {{os_name}}\"\n      - \"IP Addresses: {{ip_addresses}}\"",
+        "ansible-ssh-auth-type" : "privateKey",
+        "ansible-ssh-key-storage-path" : "keys/ansible/gg",
+        "ansible-ssh-passphrase-option" : "option.password",
+        "ansible-ssh-use-agent" : "false"
+      },
+      "nodeStep" : true,
+      "type" : "com.batix.rundeck.plugins.AnsiblePlaybookInlineWorkflowNodeStep"
+    } ],
+    "keepgoing" : false,
+    "strategy" : "node-first"
+  },
+  "timeout" : "120m",
+  "uuid" : "66a91bed-e885-49af-ad0c-e1d93d84ca0b"
+} ]
